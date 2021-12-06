@@ -76,7 +76,7 @@ app.get('/api/animals/:id', (req,res) => {
         //else send a 404 error
         res.send(404);
     }
-})
+});
 
 //setup listen() method on server
 app.listen(PORT, () => {
