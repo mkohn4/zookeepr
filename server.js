@@ -1,10 +1,16 @@
 const express = require('express');
 const {animals} = require('./data/animals');
+const fs = require('fs');
+const path = require('path');
 //set PORT equal to running process env port or 3001 if not
 const PORT = process.env.PORT || 3001;
 
 //instantiate server and assign to app so we can chain methods to it later
 const app = express();
+//parse incoming string or array data
+app.use(express.urlencoded({ extended: true }));
+//parse incoming json data
+app.use(express.json());
 
 //take in requested query paramters as an argument and filter animal json data to have a new filteres array
 function filterByQuery(query, animalsArray) {
@@ -47,6 +53,43 @@ function findById(id,animalsArray) {
     return result;
 }
 
+function createNewAnimal (body, animalsArray) {
+    console.log(body);
+    //functions main code
+    const animal = body;
+    animalsArray.push(animal);
+
+    //use fs writeFile method sycnhronously to write to animals.json file
+    //in data subdirectory and use path.join() to join value of __dirname
+    //which is where the file is we execute the code in, with the animals.json path
+    fs.writeFileSync(
+        path.join(__dirname, './data/ainals.json'),
+        //save js array data as JSON
+        //use null argument to not overwrite existing data
+        //2 argument calls out whitespace to add between values to make it readable
+        JSON.stringify({animals: animalsArray}, null, 2)
+    );
+    //return finished code to post route for response
+    return animal;
+};
+
+function validateAnimal(animal) {
+    if (!animal.name || typeof animal.name !== 'string') {
+        return false;
+    }
+    if (!animal.species || typeof animal.species !== 'string') {
+        return false;
+    }
+    if (!animal.diet || typeof animal.diet !== 'string') {
+        return false;
+    }
+    if (!animal.personalityTraits || !Array.isArray(animal.personalityTraits)) {
+        return false;
+    }
+    return true;
+
+}
+
 
 //add route for animals json for app
 //GET string that describes route client will fetch from
@@ -77,6 +120,31 @@ app.get('/api/animals/:id', (req,res) => {
         res.send(404);
     }
 });
+
+//app method wherein a client requests a server to accept data
+app.post('/api/animals', (req, res) => {
+    // req.body is where our incoming content will be
+    console.log(req.body);
+
+    //set id based on what the next index of the array will be
+    req.body.id = animals.length.toString();
+
+    //if any data in req.body is incorrect, send 400 error back
+    if (!validateAnimal(req.body)) {
+        //when we get a 400 error response, send this error
+        res.status(400).send('The animal is not properly formatted');
+    } else {
+        const animal = createNewAnimal(req.body, animals);
+        res.json(animal);
+    }
+
+
+    //add animal to json file and animals array in this function
+    const animal = createNewAnimal(req.body, animals);
+
+    //send data back as json
+    res.json(req.body);
+  });
 
 //setup listen() method on server
 app.listen(PORT, () => {
