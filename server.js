@@ -12,6 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 //parse incoming json data
 app.use(express.json());
 
+app.use(express.static('public'));
+
 //take in requested query paramters as an argument and filter animal json data to have a new filteres array
 function filterByQuery(query, animalsArray) {
     let personalityTraitsArray = [];
@@ -145,6 +147,27 @@ app.post('/api/animals', (req, res) => {
     //send data back as json
     res.json(req.body);
   });
+
+  //route that creates root homepage
+  app.get('/',(req,res) => {
+      //when a user goes to the root homepage, serve up the public/index.html file
+      res.sendFile(path.join(__dirname, './public/index.html'));
+  })
+
+  //send animals.html file when user naviagtes to root server/animnals
+  app.get('/animals', (req,res) => {
+    res.sendFile(path.join(__dirname, './public/animals.html'));
+  })
+//send zoopers html page when user navigates to /zookepers page on server
+//when user requests the zookeeper url, GET the request and RESPOND with above
+  app.get('/zookeepers', (req,res) => {
+      res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+  })
+
+//if user naviagtes to a url on the domain that doesnt exist, take them to index
+app.get('*', (req,res) => {
+    res.sendFile(path.join(__dirname, './publish/index.html'));
+})
 
 //setup listen() method on server
 app.listen(PORT, () => {
