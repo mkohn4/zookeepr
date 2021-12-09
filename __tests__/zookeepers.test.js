@@ -9,14 +9,14 @@ const {
     validatezookeeper
 } = require("../lib/zookeepers");
 
-const {zookeepers} = require("../data/zookeepers.json");
+//const {zookeepers} = require("../data/zookeepers.json");
 
 
 test("creates a zookeeper object", () => {
     const zookeeper = createNewzookeeper({
         name: "Darlene",
         id: "jhgdja3ng2"
-    },zookeepers);
+    },[]);
 
     expect(zookeeper.name).toBe("Darlene");
     expect(zookeeper.id).toBe("jhgdja3ng2");

@@ -10,9 +10,6 @@ const {
 } = require("../lib/animals");
 
 const {animals} = require("../data/animals.json");
-const { test } = require('media-typer');
-const { ExpectationFailed } = require('http-errors');
-const { jest } = require('@jest/globals');
 
 test("creates an animal object", () => {
     const animal = createNewAnimal({

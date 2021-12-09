@@ -1,9 +1,9 @@
 const express = require('express');
 const apiRoutes = require('./routes/apiRoutes');
 const htmlRoutes = require('./routes/htmlRoutes');
-const {animals} = require('./data/animals');
+//const {animals} = require('./data/animals');
 const fs = require('fs');
-const path = require('path');
+//const path = require('path');
 //set PORT equal to running process env port or 3001 if not
 const PORT = process.env.PORT || 3001;
 
@@ -13,11 +13,13 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 //parse incoming json data
 app.use(express.json());
+//serve up everything in the public folder when needed as static resources
+app.use(express.static('public'));
+
 
 app.use('/api', apiRoutes);
 app.use('/', htmlRoutes);
 
-app.use(express.static('public'));
 
 
 
